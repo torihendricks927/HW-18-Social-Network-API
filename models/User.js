@@ -1,4 +1,5 @@
 const { Schema, Types } = require('mongoose');
+const thoughtSchema = require('./Thought');
 
 const userSchema = new Schema(
     {
@@ -14,8 +15,19 @@ const userSchema = new Schema(
             unique: true
             // validate 
         },
-        thoughts: {
-            
+        thoughts: [thoughtSchema],
+        friends: [userSchema],
+        },
+        {
+            toJSON: {
+                getters: true,
+            },
         }
-    }
-)
+);
+
+userSchema.virtual('friendCount').get(function () {
+    return this.friends.length;
+});
+
+const User = model('user', userSchema);
+module.exports = User;
