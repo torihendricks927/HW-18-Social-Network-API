@@ -1,4 +1,5 @@
 const { Schema } = require('mongoose');
+const ObjectId = require('mongodb').ObjectId;
 
 const reactionSchema = new Schema(
     {
@@ -20,8 +21,14 @@ const reactionSchema = new Schema(
             default: Date.now(),
             // getter
         },
+    },
+    {
+        toJson: {
+            getters: true
+        },
     }
 );
+
 
 const Reaction = model('reaction', reactionSchema);
 module.exports = Reaction;
