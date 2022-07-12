@@ -16,3 +16,6 @@ May contribute through github fork and sending back merge requests for approval 
 Tori Hendricks
 torihendricks927 - GitHub
 
+## License 
+MIT License
+

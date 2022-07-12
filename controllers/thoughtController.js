@@ -57,5 +57,41 @@ module.exports = {
         .catch((err) => res.status(500).json(err));
     },
 
-};
+
+        // POST /api/thoughts/:id/reactions
+        addReaction({ params, body }, res) {
+            Thought.findOneAndUpdate(
+                { _id: params.thoughtId },
+                { $addToSet: { reactions: body } },
+                { new: true, runValidators: true }
+            )
+            .then(thought => {
+                if (!thought) {
+                    res.status(404).json({ message: 'No thought found with this id' });
+                    return;
+                }
+                res.json(dbThoughtData);
+            })
+            .catch(err => res.status(500).json(err));
+        },
+    
+        // DELETE /api/thoughts/:id/reactions
+        deleteReaction({ params, body }, res) {
+            Thought.findOneAndUpdate(
+                { _id: params.thoughtId },
+                { $pull: { reactions: { reactionId: body.reactionId } } },
+                { new: true, runValidators: true }
+            )
+            .then(thought => {
+                if (!thought) {
+                    res.status(404).json({ message: 'No thought found with this id' });
+                    return;
+                }
+                res.json({message: 'Successfully deleted the reaction'});
+            })
+            .catch(err => res.status(500).json(err));
+        },
+    };
+    
+
   
