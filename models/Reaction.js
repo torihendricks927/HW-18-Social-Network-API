@@ -1,4 +1,4 @@
-const { Schema } = require('mongoose');
+const { Schema, Types, model } = require('mongoose');
 const ObjectId = require('mongodb').ObjectId;
 
 const reactionSchema = new Schema(
@@ -23,7 +23,7 @@ const reactionSchema = new Schema(
         },
     },
     {
-        toJson: {
+        toJSON: {
             getters: true
         },
     }

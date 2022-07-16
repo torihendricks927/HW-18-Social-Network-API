@@ -1,4 +1,4 @@
-const { User, Thought } = require('../models');
+const { User, Thought, Reaction } = require('../models');
 
 module.exports = {
     // Get all thoughts
@@ -14,14 +14,22 @@ module.exports = {
         .then((thought) =>
           !thought
             ? res.status(404).json({ message: 'No thought with that ID' })
-            : res.json(course)
+            : res.json(thought)
         )
         .catch((err) => res.status(500).json(err));
     },
     // Create a thought
     createThought(req, res) {
       Thought.create(req.body)
-        .then((thought) => res.json(thought))
+        .then(async (thought) => {
+          const user = await User.findOneAndUpdate(
+            { username: req.body.username },
+            { $push: { thoughts: thought } },
+            { runValidators: true, new: true }
+          );
+          user.save();
+          res.json(thought);
+        })
         .catch((err) => {
           console.log(err);
           return res.status(500).json(err);
@@ -45,7 +53,7 @@ module.exports = {
         Thought.findOneAndRemove({ _id: req.params.thoughtId })
           .then((thought) => {
             if(!thought) {
-              return res.status(404).json({ message: 'No such thought exists' })
+              return res.status(404).json({ message: 'No thought exists' })
             }
             User.findOneAndUpdate(
                   { _id: req.params.userId },
@@ -53,13 +61,13 @@ module.exports = {
                   { new: true }
                 )
             })
-        .then(() => res.json({ message: 'thought deleted!' }))
+        .then((user) => res.json({ message: 'thought deleted!' }))
         .catch((err) => res.status(500).json(err));
     },
 
 
         // POST /api/thoughts/:id/reactions
-        addReaction({ params, body }, res) {
+        postReaction({ params, body }, res) {
             Thought.findOneAndUpdate(
                 { _id: params.thoughtId },
                 { $addToSet: { reactions: body } },
@@ -70,7 +78,7 @@ module.exports = {
                     res.status(404).json({ message: 'No thought found with this id' });
                     return;
                 }
-                res.json(dbThoughtData);
+                res.json(thought);
             })
             .catch(err => res.status(500).json(err));
         },
