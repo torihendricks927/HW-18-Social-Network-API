@@ -14,21 +14,22 @@ const reactionSchema = new Schema(
         },
         username: {
             type: String,
-            requried: true
+            required: true
         },
         createdAt: {
             type: Date,
             default: Date.now(),
-            // getter
+            
         },
     },
     {
         toJSON: {
             getters: true
         },
+        id: false,
     }
 );
 
 
-const Reaction = model('reaction', reactionSchema);
-module.exports = Reaction;
+// const Reaction = model('reaction', reactionSchema);
+module.exports = reactionSchema;

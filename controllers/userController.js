@@ -1,6 +1,6 @@
 
 const { ObjectId } = require('mongoose').Types;
-const { User, Thought } = require('../models');
+const { User, Thought, Reaction } = require('../models');
 
 module.exports = {
     // Get all users
@@ -45,11 +45,17 @@ module.exports = {
       },
 
     //   update user
-      updateUser(req, res) {
-        User.findOneAndUpdate({ _id: req.params.userId }, req.body, { new: true })
-          .then((user) => res.json(user))
-          .catch((err) => res.status(500).json(err));
-      },
+    updateUser(req, res) {
+      User.findOneAndUpdate(
+        {_id: req.params.userId},
+        { $set: req.body }
+      )
+        .then((user) => res.json(user))
+        .catch((err) => {
+          console.log(err);
+          return res.status(500).json(err);
+        });
+    },
 
     //   delete user and thoughts
       deleteUser(req, res) {
